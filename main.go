@@ -1,6 +1,8 @@
 package main
 
 import (
+	"cortes-programados-api/lib"
+	"cortes-programados-api/scrappers/edenorte"
 	"log"
 	"net/http"
 	"os"
@@ -14,6 +16,16 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	norte, err := edenorte.ReadOutageAnouncement()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = lib.InsertOuatageList(norte)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	router := mux.NewRouter()
 
