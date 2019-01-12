@@ -49,7 +49,7 @@ func getFileURL() (string, error) {
 		return "", err
 	}
 
-	url, _ := doc.Find("td a.attachment-link").First().Attr("href")
+	url, _ := doc.Find("td>img[alt='xls']").Next().Attr("href")
 	return url, nil
 }
 
