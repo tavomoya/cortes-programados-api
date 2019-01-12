@@ -1,5 +1,13 @@
 package lib
 
+import (
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/goodsign/monday"
+)
+
 var timeMap = map[float64]string{
 	1:    "1:00 AM",
 	1.5:  "1:30 AM",
@@ -55,4 +63,15 @@ var timeMap = map[float64]string{
 // with the hour passed as a float number
 func GetTimeString(time float64) string {
 	return timeMap[time]
+}
+
+func ParseLocalTimeString(dateStr string) time.Time {
+	d := strings.Replace(dateStr, "de", "", -1)
+	d = strings.Replace(d, ",", "", -1)
+	date, err := monday.ParseInLocation("2 January 2006", d, time.UTC, monday.LocaleEsES)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return date
 }
