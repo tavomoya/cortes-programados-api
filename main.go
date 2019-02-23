@@ -1,53 +1,65 @@
 package main
 
 import (
-	"cortes-programados-api/lib"
-	"cortes-programados-api/scrappers/edenorte"
-	"cortes-programados-api/scrappers/edesur"
-	"fmt"
-	"log"
-	"net/http"
+	"cortes-programados-api/app"
+	"cortes-programados-api/models"
 	"os"
 
-	gorillah "github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
+	"github.com/urfave/cli"
 )
 
-func healthCheck(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
+var (
+	config *models.Config
+)
 
 func main() {
 
-	norte, err := edenorte.ReadOutageAnouncement()
-	if err != nil {
-		fmt.Println("Err")
-		log.Fatal(err)
+	app := cli.NewApp()
+	config = &models.Config{}
+
+	app.Flags = getFlags()
+	app.Name = "Cortes Programados API"
+	app.Version = config.Version
+	app.Usage = "Cortes Programados API scrapes data from the major electricity distribution companies in the DR."
+	app.Action = run
+
+	app.Run(os.Args)
+
+}
+
+func getFlags() []cli.Flag {
+	return []cli.Flag{
+		cli.IntFlag{
+			Name:        "port,p",
+			Usage:       "Port for server to listen on.",
+			Value:       9000,
+			EnvVar:      "PORT",
+			Destination: &config.Port,
+		},
+		cli.StringFlag{
+			Name:        "conn-string,c",
+			Usage:       "Database Connection String",
+			EnvVar:      "CONN_STRING",
+			Destination: &config.ConnectionString,
+		},
+		cli.StringFlag{
+			Name:        "env,e",
+			Usage:       "Environment",
+			Value:       "DEV",
+			EnvVar:      "ENV",
+			Destination: &config.Env,
+		},
+		cli.StringFlag{
+			Name:        "version,v",
+			Usage:       "Application Version",
+			Value:       "0.0.0",
+			EnvVar:      "VERSION",
+			Destination: &config.Version,
+		},
 	}
+}
 
-	sur, err := edesur.GetOutageAnouncement()
-	if err != nil {
-		log.Fatal(err)
-	}
+func run(c *cli.Context) error {
 
-	outages := append(norte, sur...)
-
-	err = lib.InsertOuatageList(outages)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	router := mux.NewRouter()
-
-	router.HandleFunc("/", healthCheck)
-
-	listen := os.Getenv("PORT")
-
-	if listen == "" {
-		listen = "9000"
-	}
-
-	if err := http.ListenAndServe(":"+listen, gorillah.CombinedLoggingHandler(os.Stdout, router)); err != nil {
-		log.Fatal(err)
-	}
+	return app.Main(config)
 }
