@@ -1,10 +1,7 @@
 package main
 
 import (
-	"cortes-programados-api/lib"
-	"cortes-programados-api/scrappers/edenorte"
-	"cortes-programados-api/scrappers/edesur"
-	"fmt"
+	"cortes-programados-api/scrappers/edeeste"
 	"log"
 	"net/http"
 	"os"
@@ -19,23 +16,25 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	norte, err := edenorte.ReadOutageAnouncement()
-	if err != nil {
-		fmt.Println("Err")
-		log.Fatal(err)
-	}
+	// norte, err := edenorte.ReadOutageAnouncement()
+	// if err != nil {
+	// 	fmt.Println("Err")
+	// 	log.Fatal(err)
+	// }
 
-	sur, err := edesur.GetOutageAnouncement()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// sur, err := edesur.GetOutageAnouncement()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	outages := append(norte, sur...)
+	// outages := append(norte, sur...)
 
-	err = lib.InsertOuatageList(outages)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err = lib.InsertOuatageList(outages)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	edeeste.ReadOutageAnouncement()
 
 	router := mux.NewRouter()
 
