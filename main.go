@@ -50,7 +50,7 @@ func getFlags() []cli.Flag {
 			Destination: &config.Env,
 		},
 		cli.StringFlag{
-			Name:        "version,v",
+			Name:        "app-version,ver",
 			Usage:       "Application Version",
 			Value:       "0.0.0",
 			EnvVar:      "VERSION",

@@ -1,6 +1,7 @@
 package app
 
 import (
+	"cortes-programados-api/handlers"
 	"cortes-programados-api/lib"
 	"cortes-programados-api/models"
 	"cortes-programados-api/scrapers/edenorte"
@@ -21,7 +22,6 @@ func Main(config *models.Config) error {
 
 	norte, err := edenorte.ReadOutageAnouncement()
 	if err != nil {
-		fmt.Println("Err")
 		return err
 	}
 
@@ -37,14 +37,19 @@ func Main(config *models.Config) error {
 		return err
 	}
 
+	defer db.Session.Close()
+
 	err = db.InsertOuatageList(outages)
 	if err != nil {
 		return err
 	}
 
+	h := handlers.NewOutageHandler(db)
+
 	router := mux.NewRouter()
 
-	router.HandleFunc("/", healthCheck)
+	router.HandleFunc("/", healthCheck).Methods("GET")
+	router.HandleFunc("/outage", h.GetAll).Methods("GET")
 
 	listen := fmt.Sprintf(":%d", config.Port)
 

@@ -19,7 +19,7 @@ func getDBSession(conn string) (*mgo.Session, error) {
 
 type DBLib struct {
 	config  *models.Config
-	session *mgo.Session
+	Session *mgo.Session
 }
 
 func NewDBLib(config *models.Config) (*DBLib, error) {
@@ -36,9 +36,7 @@ func NewDBLib(config *models.Config) (*DBLib, error) {
 		return nil, fmt.Errorf("Could not connect to database: %v", err)
 	}
 
-	db.session = session
-
-	defer db.session.Close()
+	db.Session = session
 
 	return db, nil
 }
@@ -51,7 +49,7 @@ func NewDBLib(config *models.Config) (*DBLib, error) {
 func (d *DBLib) InsertOuatageList(outages []*models.Outage) error {
 
 	for _, o := range outages {
-		err := d.session.DB("cortes-programados").C("outages").Insert(o)
+		err := d.Session.DB("cortes-programados").C("outages").Insert(o)
 		if err != nil {
 			if !strings.Contains(err.Error(), "outage_unq dup key") {
 				return err
@@ -60,4 +58,15 @@ func (d *DBLib) InsertOuatageList(outages []*models.Outage) error {
 	}
 
 	return nil
+}
+
+func (d *DBLib) GetAllOutages() ([]*models.Outage, error) {
+
+	outages := make([]*models.Outage, 0)
+	err := d.Session.DB("cortes-programados").C("outages").Find(nil).All(&outages)
+	if err != nil {
+		return nil, fmt.Errorf("There was an error trying to get data: %v", err)
+	}
+
+	return outages, nil
 }
