@@ -3,8 +3,6 @@ package edesur
 import (
 	"cortes-programados-api/lib"
 	"cortes-programados-api/models"
-	"encoding/json"
-	"fmt"
 	"log"
 	"strings"
 
@@ -100,13 +98,9 @@ func GetOutageAnouncement() ([]*models.Outage, error) {
 			outages = append(outages, outs...)
 		},
 	)
-	json, err := json.MarshalIndent(outages, "", "	")
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	fmt.Println(string(json), len(outages))
 	return outages, nil
 }
 
 // TODO -> Map Zones of this scraper to Sectors inside the provinces
+// TODO -> Map Zones of this craper to Circuits.

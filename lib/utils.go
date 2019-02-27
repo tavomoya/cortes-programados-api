@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -74,4 +75,52 @@ func ParseLocalTimeString(dateStr string) time.Time {
 	}
 
 	return date
+}
+
+func ParseInterfaceToStruct(src interface{}, dst interface{}) error {
+	raw, err := json.Marshal(src)
+	if err != nil {
+		return fmt.Errorf("Error encoding source: %v", err)
+	}
+	err = json.Unmarshal(raw, dst)
+	if err != nil {
+		return fmt.Errorf("Error decoding object: %v", err)
+	}
+	return nil
+}
+
+func ParseMapToStruct(src map[string]interface{}, dst interface{}) error {
+	raw, err := json.Marshal(src)
+	if err != nil {
+		return fmt.Errorf("Error encoding source: %v", err)
+	}
+	err = json.Unmarshal(raw, dst)
+	if err != nil {
+		return fmt.Errorf("Error decoding object: %v", err)
+	}
+	return nil
+}
+
+func ParseMapToSlice(src []*map[string]interface{}, dst interface{}) error {
+	raw, err := json.Marshal(src)
+	if err != nil {
+		return fmt.Errorf("Error encoding source: %v", err)
+	}
+	err = json.Unmarshal(raw, dst)
+	if err != nil {
+		return fmt.Errorf("Error decoding object: %v", err)
+	}
+	return nil
+}
+
+func StructToMap(src interface{}, dst *map[string]interface{}) error {
+	raw, err := json.Marshal(src)
+	if err != nil {
+		return fmt.Errorf("Error encoding source: %v", err)
+	}
+	err = json.Unmarshal(raw, dst)
+	if err != nil {
+		return fmt.Errorf("Error decoding source: %v", err)
+	}
+	return nil
 }
