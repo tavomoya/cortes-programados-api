@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 // Outage represents a scheduled electricity cut from the
@@ -16,6 +18,7 @@ import (
 // Company - The company that scheduled the outage
 // Circuit - The code of the electrical circuit of the affected zone. These are defined by the CDEEE
 type Outage struct {
+	ID            bson.ObjectId `json:"id" bson:"_id"`
 	Province      string
 	Sectors       []string
 	Date          time.Time
@@ -26,4 +29,10 @@ type Outage struct {
 	AffectedZones []string
 	Company       string
 	Circuit       string
+}
+
+type OutageFilter struct {
+	Company *string    `json:"company,omitempty"`
+	Circuit *string    `json:"circuit,omitempty"`
+	Date    *time.Time `json:"date,omitempty"`
 }

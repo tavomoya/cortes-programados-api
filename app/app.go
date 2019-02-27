@@ -2,54 +2,63 @@ package app
 
 import (
 	"cortes-programados-api/handlers"
-	"cortes-programados-api/lib"
 	"cortes-programados-api/models"
-	"cortes-programados-api/scrapers/edenorte"
-	"cortes-programados-api/scrapers/edesur"
 	"fmt"
 	"net/http"
 	"os"
 
 	gorillah "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	mgo "gopkg.in/mgo.v2"
 )
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func getDBSession(conn string) (*mgo.Session, error) {
+	session, err := mgo.Dial(conn)
+	if err != nil {
+		return nil, err
+	}
+
+	return session, nil
+}
+
 func Main(config *models.Config) error {
 
-	norte, err := edenorte.ReadOutageAnouncement()
+	// norte, err := edenorte.ReadOutageAnouncement()
+	// if err != nil {
+	// 	return err
+	// }
+
+	// sur, err := edesur.GetOutageAnouncement()
+	// if err != nil {
+	// 	return err
+	// }
+
+	// outages := append(norte, sur...)
+
+	session, err := getDBSession(config.ConnectionString)
 	if err != nil {
 		return err
 	}
 
-	sur, err := edesur.GetOutageAnouncement()
-	if err != nil {
-		return err
+	defer session.Close()
+
+	dbConfig := &models.DatabaseConfig{
+		DB:               session.DB(config.DatabaseName),
+		DatabaseName:     config.DatabaseName,
+		ConnectionString: config.ConnectionString,
 	}
 
-	outages := append(norte, sur...)
-
-	db, err := lib.NewDBLib(config)
-	if err != nil {
-		return err
-	}
-
-	defer db.Session.Close()
-
-	err = db.InsertOuatageList(outages)
-	if err != nil {
-		return err
-	}
-
-	h := handlers.NewOutageHandler(db)
+	h := handlers.NewOutageHandler(dbConfig)
 
 	router := mux.NewRouter()
 
 	router.HandleFunc("/", healthCheck).Methods("GET")
 	router.HandleFunc("/outage", h.GetAll).Methods("GET")
+	router.HandleFunc("/outage/filter", h.Filter).Methods("POST")
 
 	listen := fmt.Sprintf(":%d", config.Port)
 

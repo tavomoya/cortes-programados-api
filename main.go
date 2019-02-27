@@ -56,6 +56,13 @@ func getFlags() []cli.Flag {
 			EnvVar:      "VERSION",
 			Destination: &config.Version,
 		},
+		cli.StringFlag{
+			Name:        "db-name,d",
+			Usage:       "Database Name",
+			Value:       "cortes-programados",
+			EnvVar:      "DB_NAME",
+			Destination: &config.DatabaseName,
+		},
 	}
 }
 
