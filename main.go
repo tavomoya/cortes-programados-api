@@ -1,52 +1,72 @@
 package main
 
 import (
-	"cortes-programados-api/scrappers/edeeste"
-	"log"
-	"net/http"
+	"cortes-programados-api/app"
+	"cortes-programados-api/models"
 	"os"
 
-	gorillah "github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
+	"github.com/urfave/cli"
 )
 
-func healthCheck(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
+var (
+	config *models.Config
+)
 
 func main() {
 
-	// norte, err := edenorte.ReadOutageAnouncement()
-	// if err != nil {
-	// 	fmt.Println("Err")
-	// 	log.Fatal(err)
-	// }
+	app := cli.NewApp()
+	config = &models.Config{}
 
-	// sur, err := edesur.GetOutageAnouncement()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	app.Flags = getFlags()
+	app.Name = "Cortes Programados API"
+	app.Version = config.Version
+	app.Usage = "Cortes Programados API scrapes data from the major electricity distribution companies in the DR."
+	app.Action = run
 
-	// outages := append(norte, sur...)
+	app.Run(os.Args)
 
-	// err = lib.InsertOuatageList(outages)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+}
 
-	edeeste.ReadOutageAnouncement()
-
-	router := mux.NewRouter()
-
-	router.HandleFunc("/", healthCheck)
-
-	listen := os.Getenv("PORT")
-
-	if listen == "" {
-		listen = "9000"
+func getFlags() []cli.Flag {
+	return []cli.Flag{
+		cli.IntFlag{
+			Name:        "port,p",
+			Usage:       "Port for server to listen on.",
+			Value:       9000,
+			EnvVar:      "PORT",
+			Destination: &config.Port,
+		},
+		cli.StringFlag{
+			Name:        "conn-string,c",
+			Usage:       "Database Connection String",
+			EnvVar:      "CONN_STRING",
+			Destination: &config.ConnectionString,
+		},
+		cli.StringFlag{
+			Name:        "env,e",
+			Usage:       "Environment",
+			Value:       "DEV",
+			EnvVar:      "ENV",
+			Destination: &config.Env,
+		},
+		cli.StringFlag{
+			Name:        "app-version,ver",
+			Usage:       "Application Version",
+			Value:       "0.0.0",
+			EnvVar:      "VERSION",
+			Destination: &config.Version,
+		},
+		cli.StringFlag{
+			Name:        "db-name,d",
+			Usage:       "Database Name",
+			Value:       "cortes-programados",
+			EnvVar:      "DB_NAME",
+			Destination: &config.DatabaseName,
+		},
 	}
+}
 
-	if err := http.ListenAndServe(":"+listen, gorillah.CombinedLoggingHandler(os.Stdout, router)); err != nil {
-		log.Fatal(err)
-	}
+func run(c *cli.Context) error {
+
+	return app.Main(config)
 }

@@ -2,44 +2,89 @@ package lib
 
 import (
 	"cortes-programados-api/models"
-	"log"
-	"os"
-	"strings"
+	"fmt"
 
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
-func getDBSession() (*mgo.Session, error) {
-	conn := os.Getenv("CONN_STRING")
-	session, err := mgo.Dial(conn)
-	if err != nil {
-		return nil, err
-	}
-
-	return session, nil
+type DBLib struct {
+	config *models.DatabaseConfig
 }
 
-// InsertOuatageList receives a list of outages to be inserted into the database
-// --
-// Params
-// --
-// outages - List of outages to be inserted
-func InsertOuatageList(outages []*models.Outage) error {
-	db, err := getDBSession()
+func NewDBLib(config *models.DatabaseConfig) *DBLib {
+	return &DBLib{
+		config: config,
+	}
+}
+
+func (d *DBLib) FindbyID(id bson.ObjectId) (interface{}, error) {
+
+	response := new(interface{})
+
+	err := d.config.DB.C(d.config.Collection).FindId(id).One(response)
 	if err != nil {
-		log.Fatal(err)
-		return err
+		return nil, fmt.Errorf("There was an error trying to get a record with that id: %v", err)
 	}
 
-	defer db.Close()
+	return response, nil
+}
 
-	for _, o := range outages {
-		err = db.DB("cortes-programados").C("outages").Insert(o)
-		if err != nil {
-			if !strings.Contains(err.Error(), "outage_unq dup key") {
-				return err
+func (d *DBLib) Find(query interface{}, options *models.QueryOptions) ([]interface{}, error) {
+
+	var response []interface{}
+
+	if options != nil {
+
+		if options.Skip != nil && options.Limit != nil {
+
+			err := d.config.DB.C(d.config.Collection).Find(query).Skip(*options.Skip).Limit(*options.Limit).All(&response)
+			if err != nil {
+				return nil, fmt.Errorf("There was an error trying to get a response with paginated query: %v", err)
 			}
+
 		}
+
+	}
+
+	err := d.config.DB.C(d.config.Collection).Find(query).All(&response)
+	if err != nil {
+		return nil, fmt.Errorf("There was an error trying to get a response with that query: %v", err)
+	}
+
+	fmt.Println("Hola :)", query, response, err)
+
+	return response, nil
+}
+
+func (d *DBLib) Insert(obj interface{}) error {
+
+	err := d.config.DB.C(d.config.Collection).Insert(obj)
+	if err != nil {
+		return fmt.Errorf("There was an error trying to create a new record: %v", err)
+	}
+
+	return nil
+}
+
+func (d *DBLib) Update(id bson.ObjectId, obj interface{}) error {
+
+	selector := bson.M{"_id": id}
+
+	err := d.config.DB.C(d.config.Collection).Update(selector, obj)
+	if err != nil {
+		return fmt.Errorf("There was an error trying to update record %v: %v", id, err)
+	}
+
+	return nil
+}
+
+func (d *DBLib) Delete(id bson.ObjectId) error {
+
+	selector := bson.M{"_id": id}
+
+	err := d.config.DB.C(d.config.Collection).Remove(selector)
+	if err != nil {
+		return fmt.Errorf("There was an error trying to delete record %v: %v", id, err)
 	}
 
 	return nil
