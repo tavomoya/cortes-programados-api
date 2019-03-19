@@ -63,6 +63,13 @@ func getFlags() []cli.Flag {
 			EnvVar:      "DB_NAME",
 			Destination: &config.DatabaseName,
 		},
+		cli.StringFlag{
+			Name:        "schedule,s",
+			Usage:       "Cron Job Schedule",
+			Value:       "@weekly",
+			EnvVar:      "JOB_SCHEDULE",
+			Destination: &config.Schedule,
+		},
 	}
 }
 

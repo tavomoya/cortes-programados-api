@@ -2,6 +2,7 @@ package app
 
 import (
 	"cortes-programados-api/handlers"
+	"cortes-programados-api/lib/cron"
 	"cortes-programados-api/models"
 	"fmt"
 	"net/http"
@@ -51,6 +52,10 @@ func Main(config *models.Config) error {
 		DatabaseName:     config.DatabaseName,
 		ConnectionString: config.ConnectionString,
 	}
+
+	// CRON Job:
+	job := cron.NewJob(dbConfig)
+	job.UpdateOutagesCollection(config.Schedule)
 
 	h := handlers.NewOutageHandler(dbConfig)
 
