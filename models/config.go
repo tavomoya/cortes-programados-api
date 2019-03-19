@@ -17,6 +17,7 @@ type Config struct {
 	Env              string
 	Port             int
 	Version          string
+	Schedule         string
 	DatabaseName     string
 	ConnectionString string
 }
