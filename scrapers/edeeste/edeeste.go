@@ -2,12 +2,13 @@ package edeeste
 
 import (
 	"cortes-programados-api/models"
-	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/ledongthuc/pdf"
 )
@@ -18,7 +19,6 @@ const tempFileName = "./edeeste_outages.pdf"
 func getFileURL() (string, error) {
 
 	var url string
-	category := DataCategory{}
 
 	res, err := http.Get(basePath)
 	if err != nil {
@@ -27,44 +27,18 @@ func getFileURL() (string, error) {
 
 	defer res.Body.Close()
 
-	// by, err := ioutil.ReadAll(res.Body)
-	// if err != nil {
-	// 	return url, fmt.Errorf("Could not read response: %v", err)
-	// }
-
-	// byString := fmt.Sprintf(`%s`, string(by))
-
-	// buf := new(bytes.Buffer)
-	// enc := json.NewEncoder(buf)
-	// enc.SetEscapeHTML(false)
-	// err = enc.Encode(by)
-	// if err != nil {
-	// 	return url, fmt.Errorf("Could not encode response body: %v", err)
-	// }
-
-	// payload := fmt.Sprintf(`%s`, string(buf.String()))
-
-	err = json.NewDecoder(res.Body).Decode(&category)
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return url, fmt.Errorf("Could not parse response body: %v", err)
+		return url, fmt.Errorf("Could not read response: %v", err)
 	}
 
-	// b, err := json.Marshal(buf.String())
-	// if err != nil {
-	// 	return url, fmt.Errorf("Could not marshal response body: %v", err)
-	// }
+	stringBody := string(body)
 
-	// fmt.Println(":) ", string(b))
-
-	// err = json.Unmarshal(b, &category)
-	// if err != nil {
-	// 	return url, fmt.Errorf("Could not parse response body: %v", err)
-	// }
-
-	fmt.Println("Cat: ", category)
+	linkStart := strings.Index(stringBody, "/edeeste.com.do")
+	linkEnd := strings.Index(stringBody, ".pdf")
+	url = fmt.Sprintf("https:/%s.pdf", strings.Replace(stringBody[linkStart:linkEnd], "\\", "", -1))
 
 	return url, nil
-
 }
 
 func downloadFile() error {

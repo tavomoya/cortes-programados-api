@@ -3,6 +3,7 @@ package app
 import (
 	"cortes-programados-api/handlers"
 	"cortes-programados-api/models"
+	"cortes-programados-api/scrapers/edeeste"
 	"fmt"
 	"net/http"
 	"os"
@@ -38,6 +39,12 @@ func Main(config *models.Config) error {
 	// }
 
 	// outages := append(norte, sur...)
+
+	_, err := edeeste.ReadOutageAnouncement()
+	if err != nil {
+		fmt.Println("Errrr", err)
+		return err
+	}
 
 	session, err := getDBSession(config.ConnectionString)
 	if err != nil {
