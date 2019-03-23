@@ -19,16 +19,16 @@ import (
 // Circuit - The code of the electrical circuit of the affected zone. These are defined by the CDEEE
 type Outage struct {
 	ID            bson.ObjectId `json:"id" bson:"_id"`
-	Province      string
-	Sectors       []string
-	Date          time.Time
-	StartTime     string
-	EndTime       string
+	Province      string        `json:"province"`
+	Sectors       []string      `json:"sectors"`
+	Date          time.Time     `json:"date"`
+	StartTime     string        `json:"startTime"`
+	EndTime       string        `json:"endTime"`
+	AffectedZones []string      `json:"affectedZones"`
+	Company       string        `json:"company"`
+	Circuit       string        `json:"circuit"`
 	StartTimeInt  float64
 	EndTimeInt    float64
-	AffectedZones []string
-	Company       string
-	Circuit       string
 }
 
 type OutageFilter struct {

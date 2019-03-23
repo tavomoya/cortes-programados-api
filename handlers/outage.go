@@ -30,7 +30,6 @@ func (o *OutageHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 
 	outages, err := o.controller.GetAllOutages()
 	if err != nil {
-		fmt.Println("Klok: %v", err)
 		http_res.ErrorResponse(w, err, http.StatusInternalServerError)
 		return
 	}

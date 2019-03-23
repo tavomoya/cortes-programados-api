@@ -51,8 +51,6 @@ func (d *DBLib) Find(query interface{}, options *models.QueryOptions) ([]interfa
 		return nil, fmt.Errorf("There was an error trying to get a response with that query: %v", err)
 	}
 
-	fmt.Println("Hola :)", query, response, err)
-
 	return response, nil
 }
 
