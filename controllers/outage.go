@@ -20,8 +20,9 @@ func NewOutageController(db *lib.DBLib) *OutageController {
 
 func (o *OutageController) GetAllOutages() ([]*models.Outage, error) {
 
+	query := &models.OutageFilter{}
 	// var query interfac
-	res, err := o.db.Find(nil, nil)
+	res, err := o.db.Find(query, nil)
 	if err != nil {
 		fmt.Println(":|", err)
 		return nil, err
