@@ -38,13 +38,7 @@ func (o *OutageController) GetAllOutages() ([]*models.Outage, error) {
 
 func (o *OutageController) FilterOutages(query *models.OutageFilter) ([]*models.Outage, error) {
 
-	req := make(map[string]interface{}, 0)
-	err := lib.StructToMap(query, &req)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := o.db.Find(req, nil)
+	res, err := o.db.Find(query, nil)
 	if err != nil {
 		return nil, err
 	}
