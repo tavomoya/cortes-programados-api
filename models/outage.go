@@ -32,7 +32,7 @@ type Outage struct {
 }
 
 type OutageFilter struct {
-	Company *string    `json:"company,omitempty"`
-	Circuit *string    `json:"circuit,omitempty"`
-	Date    *time.Time `json:"date,omitempty"`
+	Company *string    `json:"company,omitempty" bson:"company,omitempty"`
+	Circuit *string    `json:"circuit,omitempty" bson:"circuit,omitempty"`
+	Date    *time.Time `json:"date,omitempty" bson:"date,omitempty"`
 }
