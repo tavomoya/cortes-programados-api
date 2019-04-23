@@ -29,7 +29,7 @@ func (d *DBLib) FindbyID(id bson.ObjectId) (interface{}, error) {
 	return response, nil
 }
 
-func (d *DBLib) Find(query *models.OutageFilter, options *models.QueryOptions) ([]interface{}, error) {
+func (d *DBLib) Find(query interface{}, options *models.QueryOptions) ([]interface{}, error) {
 
 	var response []interface{}
 

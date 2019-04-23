@@ -28,18 +28,6 @@ func getDBSession(conn string) (*mgo.Session, error) {
 
 func Main(config *models.Config) error {
 
-	// norte, err := edenorte.ReadOutageAnouncement()
-	// if err != nil {
-	// 	return err
-	// }
-
-	// sur, err := edesur.GetOutageAnouncement()
-	// if err != nil {
-	// 	return err
-	// }
-
-	// outages := append(norte, sur...)
-
 	session, err := getDBSession(config.ConnectionString)
 	if err != nil {
 		return err
