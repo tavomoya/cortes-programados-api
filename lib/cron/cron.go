@@ -32,7 +32,7 @@ func (j *Job) UpdateOutagesCollection(schedule string) {
 		fmt.Println("*** [*] CRON job 'UpdateOutagesCollection' started ***")
 		fmt.Printf("*** [*] CRON job 'UpdateOutagesCollection' start time: %v ***\n", started)
 
-		outages, err := getOutagesScrapeData()
+		outages, err := GetOutagesScrapeData()
 		if err != nil {
 			ended := time.Now()
 			fmt.Println("*** [*] CRON job 'UpdateOutagesCollection' finished unexpectedly ***")
@@ -41,7 +41,7 @@ func (j *Job) UpdateOutagesCollection(schedule string) {
 			fmt.Printf("*** [*] CRON job 'UpdateOutagesCollection' time elapsed: %v ***\n", ended.Sub(started))
 		}
 
-		err = saveOutageCollection(j.db, outages)
+		err = SaveOutageCollection(j.db, outages)
 		if err != nil {
 			ended := time.Now()
 			fmt.Println("*** [*] CRON job 'UpdateOutagesCollection' finished unexpectedly ***")
@@ -59,7 +59,7 @@ func (j *Job) UpdateOutagesCollection(schedule string) {
 	j.Cron.Start()
 }
 
-func getOutagesScrapeData() ([]*models.Outage, error) {
+func GetOutagesScrapeData() ([]*models.Outage, error) {
 
 	norte, err := edenorte.ReadOutageAnouncement()
 	if err != nil {
@@ -74,7 +74,7 @@ func getOutagesScrapeData() ([]*models.Outage, error) {
 	return append(norte, sur...), nil
 }
 
-func saveOutageCollection(db *lib.DBLib, outages []*models.Outage) error {
+func SaveOutageCollection(db *lib.DBLib, outages []*models.Outage) error {
 
 	if len(outages) == 0 {
 		return nil
