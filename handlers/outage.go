@@ -3,6 +3,7 @@ package handlers
 import (
 	"cortes-programados-api/controllers"
 	"cortes-programados-api/lib"
+	"cortes-programados-api/lib/cron"
 	"cortes-programados-api/lib/http_res"
 	"cortes-programados-api/models"
 	"encoding/json"
@@ -11,6 +12,7 @@ import (
 )
 
 type OutageHandler struct {
+	DB         *lib.DBLib
 	controller *controllers.OutageController
 }
 
@@ -20,6 +22,7 @@ func NewOutageHandler(db *models.DatabaseConfig) *OutageHandler {
 
 	dbLib := lib.NewDBLib(db)
 	handler := &OutageHandler{
+		DB:         dbLib,
 		controller: controllers.NewOutageController(dbLib),
 	}
 
@@ -57,4 +60,21 @@ func (o *OutageHandler) Filter(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http_res.OKResponse(w, outages)
+}
+
+func (o *OutageHandler) RunScrapers(w http.ResponseWriter, r *http.Request) {
+
+	outages, err := cron.GetOutagesScrapeData()
+	if err != nil {
+		http_res.ErrorResponse(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	err = cron.SaveOutageCollection(o.DB, outages)
+	if err != nil {
+		http_res.ErrorResponse(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	http_res.OKResponse(w, nil)
 }

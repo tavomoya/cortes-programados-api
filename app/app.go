@@ -52,6 +52,7 @@ func Main(config *models.Config) error {
 	router.HandleFunc("/", healthCheck).Methods("GET")
 	router.HandleFunc("/outage", h.GetAll).Methods("GET")
 	router.HandleFunc("/outage/filter", h.Filter).Methods("POST")
+	router.HandleFunc("/run/scrapers", h.RunScrapers).Methods("GET")
 
 	listen := fmt.Sprintf(":%d", config.Port)
 
