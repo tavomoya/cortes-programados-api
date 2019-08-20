@@ -23,7 +23,7 @@ const tempFileName = "./edenorte_outage.xlsx"
 func getLatestAnouncement() (string, error) {
 	doc, err := goquery.NewDocument(basePath)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return "", err
 	}
 
@@ -37,14 +37,14 @@ func getFileURL() (string, error) {
 
 	anouncement, err := getLatestAnouncement()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 
 		return "", err
 	}
 
 	doc, err := goquery.NewDocument(anouncement)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 
 		return "", err
 	}
@@ -57,7 +57,7 @@ func downloadFile() error {
 
 	url, err := getFileURL()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 
 		return err
 	}
@@ -65,7 +65,7 @@ func downloadFile() error {
 	// Create local file
 	file, err := os.Create(tempFileName)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return err
 	}
 
@@ -74,8 +74,8 @@ func downloadFile() error {
 	// Get the file from the URL
 	res, err := http.Get(url)
 	if err != nil {
-		log.Fatal("Error getting file from URL =>", url)
-		log.Fatal(err)
+		log.Println("Error getting file from URL =>", url)
+		log.Println(err)
 		return err
 	}
 	defer res.Body.Close()
@@ -89,7 +89,7 @@ func downloadFile() error {
 	_, err = io.Copy(file, res.Body)
 	if err != nil {
 		log.Println("Error writing response to local file =>", err)
-		log.Fatal(err)
+		log.Println(err)
 		return err
 	}
 
@@ -168,14 +168,14 @@ func ReadOutageAnouncement() ([]*models.Outage, error) {
 	err := downloadFile()
 	if err != nil {
 		log.Println(err)
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
 	xlsx, err := excelize.OpenFile(tempFileName)
 	if err != nil {
 		log.Println(err)
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 

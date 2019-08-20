@@ -67,13 +67,13 @@ func GetOutagesScrapeData(dbConfig *models.DatabaseConfig) ([]*models.Outage, er
 	norte, err := edenorte.ReadOutageAnouncement()
 	if err != nil {
 		log.Println("Error fetching north", err)
-		return nil, err
+		// return nil, err
 	}
 
 	sur, err := edesur.GetOutageAnouncement()
 	if err != nil {
 		log.Println("Error fetching south", err)
-		return nil, err
+		// return nil, err
 	}
 
 	all := append(norte, sur...)
