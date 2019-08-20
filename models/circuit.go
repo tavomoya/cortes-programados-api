@@ -15,3 +15,10 @@ type Circuit struct {
 	CircuitType    string   `json:"circuit_type,omitempty" bson:"circuit_type,omitempty"`
 	InfluenceZones []string `json:"influence_zones,omitempty" bson:"influence_zones,omitempty"`
 }
+
+type QueryCircuits struct {
+	Name        *string `json:"name,omitempty" bson:"name,omitempty"`
+	Company     *string `json:"company,omitempty" bson:"company,omitempty"`
+	Province    *string `json:"province,omitempty" bson:"province,omitempty"`
+	CircuitType *string `json:"circuit_type,omitempty" bson:"circuit_type,omitempty"`
+}

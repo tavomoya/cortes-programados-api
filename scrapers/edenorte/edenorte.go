@@ -74,6 +74,7 @@ func downloadFile() error {
 	// Get the file from the URL
 	res, err := http.Get(url)
 	if err != nil {
+		log.Fatal("Error getting file from URL =>", url)
 		log.Fatal(err)
 		return err
 	}
@@ -87,6 +88,7 @@ func downloadFile() error {
 	// Write the response body to the local file
 	_, err = io.Copy(file, res.Body)
 	if err != nil {
+		log.Println("Error writing response to local file =>", err)
 		log.Fatal(err)
 		return err
 	}
@@ -165,12 +167,14 @@ func ReadOutageAnouncement() ([]*models.Outage, error) {
 
 	err := downloadFile()
 	if err != nil {
+		log.Println(err)
 		log.Fatal(err)
 		return nil, err
 	}
 
 	xlsx, err := excelize.OpenFile(tempFileName)
 	if err != nil {
+		log.Println(err)
 		log.Fatal(err)
 		return nil, err
 	}
