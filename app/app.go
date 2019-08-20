@@ -46,13 +46,16 @@ func Main(config *models.Config) error {
 	job.UpdateOutagesCollection(config.Schedule)
 
 	h := handlers.NewOutageHandler(dbConfig)
+	circuitHandler := handlers.NewCircuitHandler(dbConfig)
 
 	router := mux.NewRouter()
 
 	router.HandleFunc("/", healthCheck).Methods("GET")
 	router.HandleFunc("/outage", h.GetAll).Methods("GET")
 	router.HandleFunc("/outage/filter", h.Filter).Methods("POST")
+	router.HandleFunc("/circuits/filter", circuitHandler.GetCircuits).Methods("POST")
 	router.HandleFunc("/run/scrapers", h.RunScrapers).Methods("GET")
+	router.HandleFunc("/load/circuits", circuitHandler.LoadCircuits).Methods("GET")
 
 	listen := fmt.Sprintf(":%d", config.Port)
 

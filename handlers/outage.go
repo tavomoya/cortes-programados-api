@@ -13,6 +13,7 @@ import (
 
 type OutageHandler struct {
 	DB         *lib.DBLib
+	dbConfig   *models.DatabaseConfig
 	controller *controllers.OutageController
 }
 
@@ -20,9 +21,10 @@ func NewOutageHandler(db *models.DatabaseConfig) *OutageHandler {
 
 	db.Collection = "outages"
 
-	dbLib := lib.NewDBLib(db)
+	dbLib := lib.NewDBLib(db, "outages")
 	handler := &OutageHandler{
 		DB:         dbLib,
+		dbConfig:   db,
 		controller: controllers.NewOutageController(dbLib),
 	}
 
@@ -64,12 +66,13 @@ func (o *OutageHandler) Filter(w http.ResponseWriter, r *http.Request) {
 
 func (o *OutageHandler) RunScrapers(w http.ResponseWriter, r *http.Request) {
 
-	outages, err := cron.GetOutagesScrapeData()
+	outages, err := cron.GetOutagesScrapeData(o.dbConfig)
 	if err != nil {
 		http_res.ErrorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
 
+	// db := lib.NewDBLib(dbConfig)
 	err = cron.SaveOutageCollection(o.DB, outages)
 	if err != nil {
 		http_res.ErrorResponse(w, err, http.StatusInternalServerError)
