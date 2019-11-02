@@ -7,7 +7,6 @@ import (
 	"cortes-programados-api/models"
 	"cortes-programados-api/scrapers/circuits"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -49,7 +48,7 @@ func (c *CircuitHandler) GetCircuits(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http_res.ErrorResponse(
 			w,
-			fmt.Errorf("Could not parse request body: %v", err),
+			err,
 			http.StatusBadRequest,
 		)
 		return

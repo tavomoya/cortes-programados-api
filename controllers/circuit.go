@@ -3,7 +3,6 @@ package controllers
 import (
 	"cortes-programados-api/lib"
 	"cortes-programados-api/models"
-	"fmt"
 )
 
 type CircuitController struct {
@@ -26,7 +25,7 @@ func (c *CircuitController) GetCircuits(query *models.QueryCircuits) ([]*models.
 	circuits := make([]*models.Circuit, 0)
 	err = lib.ParseInterfaceToStruct(res, &circuits)
 	if err != nil {
-		return nil, fmt.Errorf("Error parsing response to a slice: %v", err)
+		return nil, err
 	}
 
 	return circuits, nil

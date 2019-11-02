@@ -7,7 +7,6 @@ import (
 	"cortes-programados-api/lib/http_res"
 	"cortes-programados-api/models"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -49,7 +48,7 @@ func (o *OutageHandler) Filter(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http_res.ErrorResponse(
 			w,
-			fmt.Errorf("Could not parse request body: %v", err),
+			err,
 			http.StatusBadRequest,
 		)
 		return
