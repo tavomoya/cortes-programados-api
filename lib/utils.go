@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"cortes-programados-api/models"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -123,4 +124,8 @@ func StructToMap(src interface{}, dst *map[string]interface{}) error {
 		return fmt.Errorf("Error decoding source: %v", err)
 	}
 	return nil
+}
+
+func NewAppError(message, ctx string) models.AppError {
+	return models.AppError{Message: message, Ctx: ctx}
 }

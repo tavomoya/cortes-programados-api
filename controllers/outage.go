@@ -31,7 +31,7 @@ func (o *OutageController) GetAllOutages() ([]*models.Outage, error) {
 	outages := make([]*models.Outage, 0)
 	err = lib.ParseInterfaceToStruct(res, &outages)
 	if err != nil {
-		return nil, fmt.Errorf("Error parsing response to a slice: %v", err)
+		return nil, err
 	}
 
 	return outages, nil
@@ -47,7 +47,7 @@ func (o *OutageController) FilterOutages(query *models.OutageFilter) ([]*models.
 	outages := make([]*models.Outage, 0)
 	err = lib.ParseInterfaceToStruct(res, &outages)
 	if err != nil {
-		return nil, fmt.Errorf("Error parsing response to a slice: %v", err)
+		return nil, err
 	}
 
 	return outages, nil
@@ -60,7 +60,10 @@ func (o OutageController) CreateOutage(outage *models.Outage) (*bson.ObjectId, e
 
 	err := o.db.Insert(outage)
 	if err != nil {
-		return nil, err
+		return nil, lib.NewAppError(
+			fmt.Sprintf("Error creating new outage: %v", err),
+			"OutageController.CreateOutage",
+		)
 	}
 
 	return &newID, nil
