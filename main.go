@@ -66,7 +66,7 @@ func getFlags() []cli.Flag {
 		cli.StringFlag{
 			Name:        "schedule,s",
 			Usage:       "Cron Job Schedule",
-			Value:       "@weekly",
+			Value:       "@daily",
 			EnvVar:      "JOB_SCHEDULE",
 			Destination: &config.Schedule,
 		},
