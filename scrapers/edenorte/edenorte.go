@@ -98,7 +98,7 @@ func downloadFile() error {
 
 func buildOutageModel(column int, value string, outage *models.Outage) {
 
-	if column < 0 || column > 6 {
+	if column < 0 || column > 7 {
 		return
 	}
 
@@ -123,14 +123,15 @@ func buildOutageModel(column int, value string, outage *models.Outage) {
 		outage.StartTime = hourString
 		outage.StartTimeInt = hour
 		break
-	case 5:
+	case 6:
 		floatVal, _ := strconv.ParseFloat(value, 64)
 		hour := math.Round((floatVal*24)*100) / 100
 		hourString := lib.GetTimeString(hour)
 		outage.EndTime = hourString
 		outage.EndTimeInt = hour
 		break
-	case 6:
+	case 7:
+		fmt.Println("value: ", value)
 		outage.AffectedZones = strings.Split(value, ",")
 		break
 	}
